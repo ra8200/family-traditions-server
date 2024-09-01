@@ -1,0 +1,14 @@
+DATABASE_URL='Your Database'
+PGHOST='Your Neon db Host'
+PGDATABASE='Your Neon db Name'
+PGUSER='Your Neon db User Name'
+PGPASSWORD='Your Neon db Password'
+ENDPOINT_ID='Your Neon db Endpoint'
+
+CLOUDINARY_CLOUD_NAME='Your Cloudinary Name'
+CLOUDINARY_API_KEY='Your Cloudinary API Key'
+CLOUDINARY_API_SECRET='Your Cloudinary API Secret'
+CLOUDINARY_URL='Your Cloudinary URL'
+
+CLERK_PUBLISHABLE_KEY='Your Clerk Publishable Key'
+CLERK_SECRET_KEY='Your Clerk Secret Key'

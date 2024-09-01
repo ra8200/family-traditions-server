@@ -8,7 +8,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // GET (read) all recipes
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const result = await pool.query(`
       SELECT r.*, rp.cloudinary_url as photo_url 
@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Error fetching recipes:', error.message);
     res.status(500).send('Error fetching recipes');
+    next(error);
   }
 });
 
