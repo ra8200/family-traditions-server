@@ -10,15 +10,24 @@ const upload = multer({ storage: storage });
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM recipe_books');
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No recipe books found' });
+    }
     res.json(result.rows);
   } catch (error) {
-    res.status(500).send('Error fetching recipe books');
+    console.error('Error fetching recipe books:', error);
+    res.status(500).json({ message: 'Internal server error', details: error.message });
   }
 });
 
 router.post('/', upload.single('image'), async (req, res) => {
   const { name, description, author_id } = req.body;
   const image = req.file;
+
+  if (!name || !description || !author_id || !image) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
   try {
     const uploadResponse = await uploadImage(image.buffer);
     const result = await pool.query(
@@ -36,6 +45,11 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { name, description, author_id } = req.body;
   const image = req.file;
+
+  if (!name || !description || !author_id) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
   try {
     let imageUrl;
     if (image) {
@@ -69,12 +83,13 @@ router.delete('/:id', async (req, res) => {
   try {
     const result = await pool.query('SELECT banner_image_url FROM recipe_books WHERE recipe_book_id = $1', [id]);
 
-    if (result.rows.length > 0) {
-      const cloudinaryUrl = result.rows[0].banner_image_url;
-      await deleteImage(cloudinaryUrl);
-
-      await pool.query('DELETE FROM recipe_books WHERE recipe_book_id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Recipe book not found' });
     }
+
+    const cloudinaryUrl = result.rows[0].banner_image_url;
+    await deleteImage(cloudinaryUrl);
+    await pool.query('DELETE FROM recipe_books WHERE recipe_book_id = $1', [id]);
 
     res.status(204).send();
   } catch (error) {

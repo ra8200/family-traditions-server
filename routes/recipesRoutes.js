@@ -29,7 +29,7 @@ router.post('/', upload.single('image'), async (req, res) => {
   const image = req.file;
 
   if (!name || !description || !ingredients || !instructions || !recipe_book_id || !creator_id || !image) {
-    return res.status(400).send('Missing required fields');
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
@@ -41,9 +41,8 @@ router.post('/', upload.single('image'), async (req, res) => {
         'INSERT INTO recipes (name, description, ingredients, instructions, recipe_book_id, creator_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
         [name, description, ingredients.split(','), instructions, recipe_book_id, creator_id]
       );
-      
-      const recipeId = recipeResult.rows[0].recipe_id;
 
+      const recipeId = recipeResult.rows[0].recipe_id;
       const imageUrl = await uploadImage(image.buffer);
 
       await client.query(
@@ -61,7 +60,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     }
   } catch (error) {
     console.error('Error creating recipe:', error.message);
-    res.status(500).send('Error creating recipe');
+    res.status(500).json({ message: 'Failed to create recipe', details: error.message });
   }
 });
 
