@@ -56,12 +56,11 @@ router.get('/:id', async (req, res) => {
 
 // Post (create) a new user
 router.post('/', async (req, res) => {
-  const { clerk_user_id, username, first_name, last_name, email, profileImage } = req.body;
+  const { clerk_user_id, username, first_name, last_name, email} = req.body;
   try {
-    const uploadResponse = await cloudinary.uploader.upload(profileImage);
     const result = await pool.query(
-      'INSERT INTO users (clerk_user_id, username, first_name, last_name, email, profile_image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [clerk_user_id, username, first_name, last_name, email, uploadResponse.url]
+      'INSERT INTO users (clerk_user_id, username, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [clerk_user_id, username, first_name, last_name, email]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -133,7 +132,7 @@ router.delete('/:id', async (req, res) => {
 
       await pool.query('DELETE FROM users WHERE user_id = $1', [id]);
     }
-
+    //TODO: send a success message/response with the deleted user data upon successful deletion, not just '204'
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting user:', error.message);
