@@ -32,7 +32,7 @@ pool.connect((err, client, done) => {
   console.log('Successfully connected to the database. Executing query...');
 
   client.query(query, (err, res) => {
-    done(); // Release the client back to the pool
+    done();
 
     if (err) {
       console.error('Error executing schema query:', err);

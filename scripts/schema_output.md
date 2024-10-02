@@ -53,23 +53,6 @@
 | role_id | integer | NO | nextval('roles_role_id_seq'::regclass) |
 | role_name | character varying | NO | N/A |
 
-## Table: user_account_permissions
-
-| Column | Type | Nullable | Default |
-|--------|------|----------|--------|
-| account_permission_id | integer | NO | nextval('user_account_permissions_account_permission_id_seq'::regclass) |
-| user_id | integer | NO | N/A |
-| permission_name | character varying | NO | N/A |
-
-## Table: user_has_permission
-
-| Column | Type | Nullable | Default |
-|--------|------|----------|--------|
-| permission_id | integer | NO | nextval('user_has_permission_permission_id_seq'::regclass) |
-| user_id | integer | NO | N/A |
-| recipe_book_id | integer | NO | N/A |
-| role_id | integer | NO | N/A |
-
 ## Table: users
 
 | Column | Type | Nullable | Default |
@@ -83,4 +66,7 @@
 | profile_image_url | character varying | YES | N/A |
 | creation_date | timestamp with time zone | NO | CURRENT_TIMESTAMP |
 | last_login | timestamp with time zone | YES | N/A |
+| account_status | character | YES | 'active'::bpchar |
+| owned_books | jsonb | YES | N/A |
+| shared_with_books | jsonb | YES | N/A |
 

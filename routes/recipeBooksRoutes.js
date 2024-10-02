@@ -7,6 +7,7 @@ const { uploadImage, deleteImage } = require('../services/imageServices');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Get All Recipe Books
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM recipe_books');
@@ -20,6 +21,26 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get a Single Recipe Book
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM recipe_books WHERE recipe_book_id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Recipe book not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching recipe book:', error.message);
+    res.status(500).json({ message: 'Internal server error', details: error.message });
+  }
+});
+
+
+// Create a Recipe Book
 router.post('/', upload.single('image'), async (req, res) => {
   const { name, description, author_id } = req.body;
   const image = req.file;
@@ -41,6 +62,7 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
+// Edit a Recipe Book
 router.put('/:id', upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { name, description, author_id } = req.body;
@@ -78,6 +100,8 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   }
 });
 
+
+// Delete a Recipe Book
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
