@@ -69,4 +69,3 @@
 | account_status | character | YES | 'active'::bpchar |
 | owned_books | jsonb | YES | N/A |
 | shared_with_books | jsonb | YES | N/A |
-
